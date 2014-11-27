@@ -39,10 +39,12 @@ def g(x):
 	return(x)
 
 
+# b4 positive represents the population size at which the per-individual birth rate is half of what it would be if mating was not limited
+
 #Modele
-def FunM1(N,theta):
+def FunM3(N,theta):
 	def f (x):
-		return(x*np.exp(theta['b0']+theta['b1']*x+np.random.normal(0,theta['Seps'])))
+		return(((x**2)/(theta['b4']+x))*np.exp(theta['b0']+theta['b1']*x+np.random.normal(0,theta['Seps'])))
 	return (list(map(f,N)))
 	
 	
@@ -54,17 +56,17 @@ Y=np.loadtxt(chemin)
 #Theta
 
 Theta={}
-Theta['N0']=1
+Theta['N0']=1.2
 Theta['Seps']=12
 Theta['Sw']=12
 Theta['b0']=0.1
 Theta['b1']=0.1
-Theta['b2']=1
-Theta['b3']=0
+Theta['b2']=-1
+Theta['b3']=1
 Theta['b5']=0
 Theta['b6']=0
 Theta['b7']=0
-Theta['b4']=0
+Theta['b4']=10
 
 
 #Variables Utiles
@@ -80,13 +82,13 @@ Vu['b3']=0
 Vu['b5']=0
 Vu['b6']=0
 Vu['b7']=0
-Vu['b4']=0
+Vu['b4']=1
 
 
 
 
 
-M1=Model(Y,FunM1,g,Theta,prior,Vu)
+M3=Model(Y,FunM3,g,Theta,prior,Vu)
 
 
 #Proposal Brownien
@@ -99,19 +101,19 @@ Var=np.identity(11)/10000
 
 
 
-def p1(thet):
+def p3(thet):
 	
 	t=list(thet.values())
 	t=t+np.random.multivariate_normal(np.zeros(11),Var)
 	return (dict(zip(thet.keys(),t)))
 	
 	
-def ratio1(a,b):
+def ratio3(a,b):
 	return(1)
 	
 
 
-sol=M1.Metropolis_Hastings(100,20,Theta,p1,ratio1)
+sol=M3.Metropolis_Hastings(100,20,Theta,p3,ratio3)
 sol=np.asarray(sol)
 plt.plot(sol[:,0])
 plt.show()

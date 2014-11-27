@@ -39,10 +39,12 @@ def g(x):
 	return(x)
 
 
+
+
 #Modele
-def FunM1(N,theta):
+def FunM0(N,theta):
 	def f (x):
-		return(x*np.exp(theta['b0']+theta['b1']*x+np.random.normal(0,theta['Seps'])))
+		return(x*np.exp(theta['b0']+np.random.normal(0,theta['Seps'])))
 	return (list(map(f,N)))
 	
 	
@@ -74,7 +76,7 @@ Vu['N0']=1
 Vu['Seps']=1
 Vu['Sw']=1
 Vu['b0']=1
-Vu['b1']=1
+Vu['b1']=0
 Vu['b2']=0
 Vu['b3']=0
 Vu['b5']=0
@@ -86,7 +88,7 @@ Vu['b4']=0
 
 
 
-M1=Model(Y,FunM1,g,Theta,prior,Vu)
+M0=Model(Y,FunM0,g,Theta,prior,Vu)
 
 
 #Proposal Brownien
@@ -99,19 +101,19 @@ Var=np.identity(11)/10000
 
 
 
-def p1(thet):
+def p0(thet):
 	
 	t=list(thet.values())
 	t=t+np.random.multivariate_normal(np.zeros(11),Var)
 	return (dict(zip(thet.keys(),t)))
 	
 	
-def ratio1(a,b):
+def ratio0(a,b):
 	return(1)
 	
 
 
-sol=M1.Metropolis_Hastings(100,20,Theta,p1,ratio1)
+sol=M0.Metropolis_Hastings(100,20,Theta,p0,ratio0)
 sol=np.asarray(sol)
 plt.plot(sol[:,0])
 plt.show()
